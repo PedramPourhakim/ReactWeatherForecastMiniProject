@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import getWeatherInfo from "../redux/weather/weatherAction";
+import { sendWeatherRequest } from "../redux/weather/weatherAction";
+// import getWeatherInfo from "../redux/weather/weatherAction";
 import PersianDate from "./PersianDate"
 
 
@@ -13,15 +14,18 @@ const Weather = () => {
 
     const handleGetWeather = e=>{
         e.preventDefault()
-        dispatch(getWeatherInfo(query))
+        // dispatch(getWeatherInfo(query))
+        dispatch(sendWeatherRequest(query))
         setQuery('')
     }
-
+    function convertToCel(value){
+        return (value-273).toFixed(2);
+    }
     useEffect(()=>{
         if (!data?.main) {
             return
         }
-        let temp = data.main.temp
+        let temp = convertToCel(data.main.temp)
         if (temp < 12) {
             setBackMode('cold')
         }else if (temp < 15 ) {
@@ -67,7 +71,7 @@ const Weather = () => {
                     <div className='row justify-content-center py-3'>
                         <div className='col-9 col-md-6 col-lg-4 col-xl-3'>
                             <div className='temprature_box pt-3'>
-                                <span>{Math.round(data?.main?.temp)}</span> °C
+                                <span>{convertToCel(data?.main?.temp)}</span> °C
                             </div>
                         </div>
                     </div>
@@ -81,7 +85,7 @@ const Weather = () => {
             ) : error ? (
                 <h3 className='text-center text_color'>نام شهر یا کشور به درستی وارد کنید</h3>
             ) : (
-                <h3 className='text-center text_color'>مکان مورد نظر را جستجو کنید</h3>
+                <h3 className='text-center text_color'>شهر یا کشور مورد نظر را جستجو کنید</h3>
             ) }
 
         </div>
