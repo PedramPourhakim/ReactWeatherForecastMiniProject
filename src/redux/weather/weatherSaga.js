@@ -1,5 +1,5 @@
 import { SEND_WEATHER_REQUEST } from "./weatherTypes";
-import {call, put, takeEvery} from 'redux-saga/effects';
+import {all,call, fork, put, takeEvery, takeLatest} from 'redux-saga/effects';
 import axios from "axios";
 import { receiveWeatherError, receiveWeatherResponse } from "./weatherAction";
 
@@ -17,6 +17,29 @@ function* handleGetWeather(action){
     }
 }
 export function* watcherSaga(){
-    yield takeEvery(SEND_WEATHER_REQUEST,
-        handleGetWeather)
+    // yield takeEvery(SEND_WEATHER_REQUEST,
+    //     handleGetWeather)//این متد بابت هربار فشردن دکمه یک درخواست جدید به سرور ارسال میکند
+    yield takeLatest(SEND_WEATHER_REQUEST,
+        handleGetWeather)//هرچقدر دکمه را بزند فقط مرتبه ی آخرش را اجرا میکند و برای دیتابیس بهتر است
+}
+function* handleGetWeather2(action){
+    try {
+        const res = yield call(getWeatherRequest, 
+            action.payload)
+        yield put(receiveWeatherResponse(res?.data))
+    } catch (error) {
+        yield put(receiveWeatherError(error?.message))
+    }
+}
+export function* watcherSaga2(){
+    // yield takeEvery(SEND_WEATHER_REQUEST,
+    //     handleGetWeather)//این متد بابت هربار فشردن دکمه یک درخواست جدید به سرور ارسال میکند
+    yield takeLatest(SEND_WEATHER_REQUEST,
+        handleGetWeather)//هرچقدر دکمه را بزند فقط مرتبه ی آخرش را اجرا میکند و برای دیتابیس بهتر است
+}
+export function* rootSaga(){
+    yield all([
+        fork(watcherSaga),
+        fork(watcherSaga2)
+    ]);
 }

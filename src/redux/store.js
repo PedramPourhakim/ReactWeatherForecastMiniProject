@@ -5,7 +5,7 @@ import { composeWithDevTools } from "redux-devtools-extension";
 import logger from "redux-logger";
 import thunk from "redux-thunk";
 import weatherReducer from "./weather/weatherReducer";
-import { watcherSaga } from "./weather/weatherSaga";
+import { rootSaga, watcherSaga } from "./weather/weatherSaga";
 
 // const store = createStore(weatherReducer , 
 //     composeWithDevTools(applyMiddleware(thunk)))
@@ -19,5 +19,5 @@ const store = createStore(weatherReducer,
 //         weatherReducer
 //     },
 // })
-sagaMiddleware.run(watcherSaga)
+sagaMiddleware.run(rootSaga)
 export default store;
